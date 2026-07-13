@@ -102,7 +102,7 @@
 &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
 							
 							<div class="text-center">
-								<button type="button" id="kt_sign_up_submit" class="btn btn-lg btn-primary">
+								<button type="submit" id="kt_sign_up_submit" class="btn btn-lg btn-primary">
 									<span id="sub"class="indicator-label">Submit</span>
 									<span id="loader2" class="indicator-progress">Please wait...
 									<span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
@@ -129,7 +129,7 @@
 	$(function() {
 
 
-			$('#kt_careers_form').on('submit', function(e) {
+			$('#kt_sign_up_form').on('submit', function(e) {
 
 				$('#sub').hide();
 				$('#loader2').show();

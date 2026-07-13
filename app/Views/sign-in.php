@@ -52,7 +52,7 @@
 						<div class="fv-row mb-10">
 							<div class="d-flex flex-stack mb-2">
 								<label class="required form-label fw-bolder text-dark fs-6 mb-0">Password</label>
-								<a href="<?php echo base_url('Home/frtpwd');?>" class="link-primary fs-6 fw-bolder">Forgot Password ?</a>
+								<a href="<?php echo base_url('frtpwd');?>" class="link-primary fs-6 fw-bolder">Forgot Password ?</a>
 							</div>
 							<input class="form-control form-control-lg form-control-solid border-dark" type="password" name="password" autocomplete="off" required/>
 						</div>
@@ -120,8 +120,11 @@
 										$('#cnte').hide();
 										$('#loader1').show();
                     setTimeout(()=>{
-							window.location.href = '<?= base_url('viewempdashboard') ?>';          
-
+							if(data.role == 0){
+								window.location.href = '<?= base_url('viewdashboard') ?>';
+							} else {
+								window.location.href = '<?= base_url('viewempdashboard') ?>';
+							}
 						},2000);
 									
                     }else{

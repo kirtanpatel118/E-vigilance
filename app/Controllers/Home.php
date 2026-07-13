@@ -47,50 +47,35 @@ class Home extends BaseController
 
         $session = session();
 
+        if($data == NULL){
+            $response = ['success'=> false, 'msg'=>'No data found'];
+            return $this->response->setJSON($response);
+        }
+
         $uid = $data['uid'];
 
-        if($data == NULL){
-            
-            $response = ['success'=> false, 'msg'=>'No data found'];
+        if($data['pwd'] != $pwd){
+            $response = ['success'=> false, 'msg'=>'Something went wrong email or password.'];
+            return $this->response->setJSON($response);
+        }
+
+        $role = $data['user_level'];
+
+        if($role == 0){
+            // Admin: no status check needed
+            $session->set('uid', $uid);
+            $response = ['success'=> true, 'msg'=>'You have successfully logged in to system', 'role'=> $role];
+            return $this->response->setJSON($response);
+        } else {
+            // Employee: check active status
+            if($data['status'] == 0){
+                $session->set('uid', $uid);
+                $response = ['success'=> true, 'msg'=>'You have successfully logged in to system', 'role'=> $role];
                 return $this->response->setJSON($response);
-        }
-                
-        $rol = 0;
-        if(!empty($data)){
-            
-            if($data['email'] == $username && $data['pwd'] == $pwd){
-                    $role = $data['user_level'];
-                    if ($role== $rol) {
-        
-                        $session->set('uid',$uid);
-
-                        $response = ['success'=> true, 'msg'=>'You have successfully logged in to system','role'=>$role ];
-                        return $this->response->setJSON($response);
-
-                    }
-                    else{
-                            $status = $data['status'];
-                            if($status == 0) 
-                            {
-                                $session->set('uid',$uid);
-                                $response = ['success'=> true, 'msg'=>'You have successfully logged in to system','role'=>$role];
-                                return $this->response->setJSON($response);
-
-                            }
-                            else{
-                                $response = ['success'=> false, 'msg'=>'Your account status is inactive'];
-                                return $this->response->setJSON($response);
-                            }
-                        }
+            } else {
+                $response = ['success'=> false, 'msg'=>'Your account status is inactive'];
+                return $this->response->setJSON($response);
             }
-            else{
-                $response = ['success'=> false, 'msg'=>'Something went wrong email or password.'];
-                                return $this->response->setJSON($response);
-            }
-        }
-        else{
-                $response = ['success'=> false, 'msg'=>'No data found'];
-                                return $this->response->setJSON($response);
         }
 
         
@@ -410,11 +395,7 @@ class Home extends BaseController
         $assdata = new Omodel();
         $data['assdata'] = $assdata->findAll();
 
-        $data['sql'] = $assdata->select('*')
-                        ->join('user_master', 'user_master.uid = officer_detail','inner')
-                        ->join('complaint_detail', 'complaint_detail.complaint_id = officer_detail.uid','inner')
-                        ->where('officer_detail',$uid)
-                        ->findAll();
+        $data['sql'] = [];
         
         return view('Employee/Emptemplate',$data);
 
@@ -499,12 +480,21 @@ class Home extends BaseController
     public function stspdate()
     {
         $session = session();
-        $uid = $session->get('uid');
-        $userdata = new Dmodel();
-        $data['userdata'] = $userdata->where('uid',$uid)->first();
+        $adminUid = $session->get('uid');
+        $targetUid = $this->request->getPost('bid');
+
+        if(empty($targetUid)){
+            $response = ['status'=> "Invalid request.", 'success'=>false];
+            return $this->response->setJSON($response);
+        }
 
         $userdata = new Dmodel();
-        $sta=$userdata->where('uid',$uid)->first();
+        $sta=$userdata->where('uid',$targetUid)->first();
+        if(empty($sta)){
+            $response = ['status'=> "Employee not found.", 'success'=>false];
+            return $this->response->setJSON($response);
+        }
+
         if($sta['status']== 0)
         {
             $data = [
@@ -517,6 +507,7 @@ class Home extends BaseController
                 'status' => 0
             ];
         }
+        $uid = $targetUid;
         $que = $userdata->set($data)->where('uid',$uid)->update();
 
         if($que==false)
@@ -534,13 +525,14 @@ class Home extends BaseController
 
     public function delete_employee()
     {
-        $session=session();
-        $uid=$session->get('uid');
+        $targetUid = $this->request->getPost('bid');
+        if(empty($targetUid)){
+            $response=['status'=>"Invalid request.",'status_text'=>'Error','status_icon'=>'error','success'=>false];
+            return $this->response->setJSON($response);
+        }
         $userdata=new Dmodel();
-        $data['userdata']=$userdata->where('uid',$uid)->first();
-        $userdata=new Dmodel();
-        $data=$userdata->where('uid',$uid)->delete($uid);
-        $response=['status'=>"Employee Deleted",'status_text'=>'Deleted','status_icon'=>'success'];
+        $userdata->where('uid',$targetUid)->delete();
+        $response=['status'=>"Employee Deleted",'status_text'=>'Deleted','status_icon'=>'success','success'=>true];
         return $this->response->setJSON($response);
     }
 
@@ -556,14 +548,8 @@ class Home extends BaseController
             $response=['success'=>false, 'msg'=>'Fill all details properly'];
             return $this->response->setJSON($response);
         }
-        $complaint_id = $this->request->getPost('complaint_id');
-        $userdatanew=new Cmodel();
-        $userd=$userdatanew->where('complaint_id',$complaint_id)->first();
-        if(empty($_FILES['emppic']['name'][0]))
-        {
-            $pic=$userd['photo'];
-        }
-        else
+        $pic = 'default.jpg';
+        if(!empty($_FILES['emppic']['name'][0]))
         {
             $file=$this->request->getFile('emppic');
             $profile_image=$file->getName();
@@ -621,10 +607,7 @@ class Home extends BaseController
         $data['empdata']=$userdata->findAll();
         $assdata=new Omodel();
         $data['assdata']=$assdata->findAll();
-        $data['sql'] = $assdata->select('*')
-                        ->join('user_master','user_master.uid = officer_detail','inner')
-                        ->join('complaint_detail','complaint_detail.complaint_id = officer_detail.complaint_id','inner')
-                        ->findAll();
+        $data['sql'] = [];
         return view('common/template',$data);
 
     }
@@ -658,6 +641,12 @@ class Home extends BaseController
     public function Employees_report()
     {
         $session=session();
+        $uid=$session->get('uid');
+        $userdata=new Dmodel();
+        $data['userdata']=$userdata->where('uid',$uid)->first();
+        $data['title']="Employee Report";
+        $data['main_content']="Employees_report";
+        $data['empdata']=$userdata->where('user_level',1)->findAll();
         return view('common/template',$data);
     }
 
@@ -682,14 +671,23 @@ class Home extends BaseController
             $response=['success'=>false, 'msg'=>'Fill all details properly'];
             return $this->response->setJSON($response);
         }
-        $uid=$this->request->getPost('uid');
-        $data=[
-            'email'=>$this->request->getPost('username'),
-            'pwd'=>$this->request->getPost('npassword'),
-            'pwd'=>$this->request->getPost('cpassword'),
-        ];
+        $npassword = $this->request->getPost('npassword');
+        $cpassword = $this->request->getPost('cpassword');
+        if($npassword !== $cpassword){
+            $response=['success'=> false,'msg'=>'Passwords do not match'];
+            return $this->response->setJSON($response);
+        }
+        $email = $this->request->getPost('username');
         $udata=new Dmodel();
-        $obj=$udata->set($data)->where('uid',$uid)->update();
+        $existing = $udata->where('email',$email)->first();
+        if(empty($existing)){
+            $response=['success'=> false,'msg'=>'Email not found'];
+            return $this->response->setJSON($response);
+        }
+        $data=[
+            'pwd'=> md5($npassword),
+        ];
+        $obj=$udata->set($data)->where('email',$email)->update();
         if($obj != false)
         {
             $response=['success'=> true,'msg'=>'Password Changed Successfully'];
@@ -697,10 +695,9 @@ class Home extends BaseController
         }
         else
         {
-            $response=['success'=> false,'msg'=>'Something went to wrong'];
+            $response=['success'=> false,'msg'=>'Something went wrong'];
             return $this->response->setJSON($response);
         }
-        return view('sign-in');
     }
 
     public function signOut()
