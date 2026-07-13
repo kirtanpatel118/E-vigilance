@@ -83,7 +83,7 @@ phpunit
 #-------------------------
 # Composer
 #-------------------------
-vendor/
+# vendor/ — included for deployment (no server-side composer available)
 
 #-------------------------
 # IDE / Development Files
