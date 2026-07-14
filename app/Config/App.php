@@ -26,6 +26,8 @@ class App extends BaseConfig
      */
     public $baseURL = 'http://localhost/Project/E-vigilance/public/';
 
+    public array $allowedHostnames = [];
+
     /**
      * --------------------------------------------------------------------------
      * Index File

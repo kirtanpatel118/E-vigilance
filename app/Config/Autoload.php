@@ -84,4 +84,9 @@ class Autoload extends AutoloadConfig
      * @var array<int, string>
      */
     public $files = [];
+
+    /**
+     * @var array<int, string>
+     */
+    public $helpers = [];
 }

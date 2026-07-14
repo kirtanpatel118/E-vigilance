@@ -10,13 +10,11 @@ class Home extends BaseController
 {
     public function index()
     {
-        $user = new Dmodel();
         return view('sign-in');
     }
 
     public function signadmin()
     {
-        $user = new Dmodel();
         return view('signadmin');
     }
 
