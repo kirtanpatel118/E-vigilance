@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head><base href="../../">
+	<head>
 	<link href="<?php echo base_url('assets/plugins/custom/datatables/datatables.bundle.css')?>" rel="stylesheet" type="text/css"/>
 		<title> <?php echo $title;  ?></title>
 
@@ -54,7 +54,6 @@
 						</a>
 					</div>
 					
-					<div class="aside-footer d-flex flex-column align-items-center flex-column-auto" id="kt_aside_footer">
 					<div class="aside-nav d-flex flex-column align-lg-center flex-column-fluid w-100 pt-5 pt-lg-0" id="kt_aside_nav">
 					
 					<div id="kt_aside_menu" class="menu menu-column menu-title-gray-600 menu-state-primary menu-state-icon-primary menu-state-bullet-primary menu-arrow-gray-500 fw-bold fs-6" data-kt-menu="true">
@@ -95,7 +94,7 @@
 								</div>
 
 								<div class="menu-item">
-									<a class="menu-link" href="<?php echo base_url('view_Assign_Hwd'); ?>">
+									<a class="menu-link" href="<?php echo base_url('Feedback'); ?>">
 										<span class="menu-bullet">
 											<span class="bullet bullet-dot"></span>
 										</span>
@@ -107,8 +106,10 @@
 					</div>
 			
 				</div>
+
+					<div class="aside-footer d-flex flex-column align-items-center flex-column-auto" id="kt_aside_footer">
 					</div>
-					
+
 				</div>
 				
 				<div class="wrapper d-flex flex-column flex-row-fluid" id="kt_wrapper">

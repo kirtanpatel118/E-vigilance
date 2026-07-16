@@ -65,8 +65,8 @@ class Home extends BaseController
             $response = ['success'=> true, 'msg'=>'You have successfully logged in to system', 'role'=> $role];
             return $this->response->setJSON($response);
         } else {
-            // Employee: check active status
-            if($data['status'] == 0){
+            // Employee: check active status (1 = active, 0 = inactive)
+            if($data['status'] == 1){
                 $session->set('uid', $uid);
                 $response = ['success'=> true, 'msg'=>'You have successfully logged in to system', 'role'=> $role];
                 return $this->response->setJSON($response);
@@ -81,18 +81,23 @@ class Home extends BaseController
     
     public function viewdashboard()
     {
+        $data['title'] = "Dashboard";
+        $data['main_content'] = "viewdashboard";
+        $session = session();
+        $uid = $session->get('uid');
 
-            $data['title']="Dashboard";
-            $data['main_content']="viewdashboard";
-            $session = session();
-            $uid = $session->get('uid');
-            $userdata = new Dmodel();
-    
-            $data['userdata'] = $userdata->where('uid',$uid)->first();
-            
-            return view('common/template',$data);
+        $userdata = new Dmodel();
+        $data['userdata'] = $userdata->where('uid', $uid)->first();
 
+        $complaints = new Cmodel();
+        $data['hwddata'] = $complaints->findAll();
 
+        $officers = new Omodel();
+        $data['assdata'] = $officers->findAll();
+
+        $data['empdata'] = $userdata->where('user_level', 1)->findAll();
+
+        return view('common/template', $data);
     }
 
     public function view_admin_profile()
@@ -112,7 +117,7 @@ class Home extends BaseController
     {
         $session=session();
         $uid=$session->get('uid');
-        $userdata = new Omodel();
+        $userdata = new Dmodel();
         $data['userdata']=$userdata->where('uid',$uid)->first();
         $data['title']="Add Officer";
         $data['main_content']='addofficer';
@@ -188,16 +193,16 @@ class Home extends BaseController
         }
 
         $data = [
-            
-            'fullname'=>  $this->request->getPost('fullname'),
-            'email'=> $this->request->getPost('email'),
-            'pwd'=> md5($this->request->getPost('password')),
-            'user_level'=> 1,
-            'branch'=> $this->request->getPost('branch'),
-            'position'=> $this->request->getPost('position'),
-            'photo'=> "150-26.jpg",
+            'fullname'    =>  $this->request->getPost('fullname'),
+            'email'       => $this->request->getPost('email'),
+            'pwd'         => md5($this->request->getPost('password')),
+            'user_level'  => 1,
+            'status'      => 1,
+            'branch'      => $this->request->getPost('branch'),
+            'position'    => $this->request->getPost('position'),
+            'photo'       => "150-26.jpg",
             'joining_date'=> $this->request->getPost('joiningdate'),
-
+            'modt'        => date('Y-m-d H:i:s'),
         ];
 
         $udata = new Dmodel();
@@ -221,7 +226,7 @@ class Home extends BaseController
     {
         $session=session();
         $uid=$session->get('uid');
-        $userdata = new Omodel();
+        $userdata = new Dmodel();
 
         $data['userdata']=$userdata->where('uid',$uid)->first();
         $data['title']="View Officer";
@@ -235,31 +240,20 @@ class Home extends BaseController
     {
         $session=session();
         $uid=$session->get('uid');
-        $userdata = new Omodel();
+        $userdata = new Dmodel();
 
         $data['userdata']=$userdata->where('uid',$uid)->first();
-        $data['title']="Get Employee";
+        $data['title']="View Employees";
         $data['main_content']="getemp";
-        $userdata=new Omodel();
-        $data['user']=$userdata->findAll();
+        $data['employees']=$userdata->where('user_level',1)->findAll();
         return view('common/template',$data);
     }
 
     public function getallapi()
     {
-       $ch = curl_init();
-        $curlConfig = array(
-            CURLOPT_URL            => "http://localhost/Project/chs/public/getallempdata",
-            CURLOPT_POST           => false,
-            CURLOPT_RETURNTRANSFER => true,
-         );
-        curl_setopt_array($ch, $curlConfig);
-        $result = curl_exec($ch);
-        curl_close($ch);
-
         $session=session();
         $uid=$session->get('uid');
-        $userdata = new Omodel();
+        $userdata = new Dmodel();
         $data['userdata']=$userdata->where('uid',$uid)->first();
         $data['title']="Get Employee";
         $data['main_content']="getemp";
@@ -315,45 +309,42 @@ class Home extends BaseController
         $inputs = $this->validate([
             'fullname'=> 'required',
             'email'=> 'required',
-            'password'=> 'required',
             'joiningdate'=> 'required',
             'branch'=> 'required',
             'position'=> 'required',
-
         ]);
-        if (!$inputs) 
+        if (!$inputs)
         {
-                
-                $response = ['success'=> false, 'msg'=>'Fill details properly'];
-                return $this->response->setJSON($response);
+            $response = ['success'=> false, 'msg'=>'Fill details properly'];
+            return $this->response->setJSON($response);
         }
-        
+
         $uid = $this->request->getPost('uid');
-        $userdatanew=new Dmodel();
-        $userd=$userdatanew->where('uid',$uid)->first();
-        if(empty($_FILES['emppic']['name'][0]))
-        {
-            $pic=$userd['photo'];
+        $userdatanew = new Dmodel();
+        $userd = $userdatanew->where('uid', $uid)->first();
+
+        $pic = $userd['photo'];
+        if (!empty($_FILES['emppic']['name'])) {
+            $file = $this->request->getFile('emppic');
+            $temp = explode('.', $file->getName());
+            $newfilename = round(microtime(true)) . '.' . end($temp);
+            $file->move('uploads/', $newfilename);
+            $pic = $newfilename;
         }
-        else
-        {
-            $file=$this->request->getFile('emppic');
-            $profile_image=$file->getName();
-            $temp=explode(".",$profile_image);
-            $newfilename=round(microtime(true)) . '.' . end($temp);
-            $file->move("uploads/",$newfilename);
-            $pic=$newfilename;
-        }
-        
+
         $data = [
-            'fullname'=>  $this->request->getPost('fullname'),
-            'email'=> $this->request->getPost('email'),            
-            'pwd'=> md5($this->request->getPost('password')),
-            'joining_date'=> $this->request->getPost('joiningdate'),
-            'branch'=> $this->request->getPost('branch'),
-            'position'=> $this->request->getPost('position'),
-            'photo'=> $pic,
+            'fullname'     => $this->request->getPost('fullname'),
+            'email'        => $this->request->getPost('email'),
+            'joining_date' => $this->request->getPost('joiningdate'),
+            'branch'       => $this->request->getPost('branch'),
+            'position'     => $this->request->getPost('position'),
+            'photo'        => $pic,
         ];
+        // Only update password if a new one was provided
+        $newPwd = $this->request->getPost('password');
+        if (!empty($newPwd)) {
+            $data['pwd'] = md5($newPwd);
+        }
 
         $udata = new Dmodel();
 
@@ -404,8 +395,10 @@ class Home extends BaseController
         $data['title']="Dashboard";
         $data['main_content']="empdash";
         $session = session();
+        $uid = $session->get('uid');
+        $userdata = new Dmodel();
+        $data['userdata'] = $userdata->where('uid', $uid)->first();
         return view('Employee/Emptemplate',$data);
-
     }
 
     public function update_emp($id)
@@ -414,12 +407,58 @@ class Home extends BaseController
         $uid=$session->get('uid');
         $userdata=new Dmodel();
         $data['userdata']=$userdata->where('uid',$uid)->first();
-        $uid=$id;
-        $userdata = new Dmodel();
-        $data['empdata']=$userdata->where('uid',$uid)->first();
+        $empdata = $userdata->where('uid',$id)->first();
+        if ($empdata === null) {
+            return redirect()->to(base_url('viewdashboard'));
+        }
+        $data['empdata']=$empdata;
         $data['title']="Update Employee";
         $data['main_content']="update_employee";
         return view('common/template',$data);
+    }
+
+    public function update_officer($id)
+    {
+        $session=session();
+        $uid=$session->get('uid');
+        $userdata=new Dmodel();
+        $data['userdata']=$userdata->where('uid',$uid)->first();
+        $omodel = new Omodel();
+        $officer = $omodel->where('uid',$id)->first();
+        if ($officer === null) {
+            return redirect()->to(base_url('viewofficer'));
+        }
+        $data['officer']=$officer;
+        $data['title']="Update Officer";
+        $data['main_content']="update_officer";
+        return view('common/template',$data);
+    }
+
+    public function update_officer_store()
+    {
+        $inputs = $this->validate([
+            'fullname'=>'required',
+            'email'=>'required',
+            'branch'=>'required',
+            'position'=>'required',
+        ]);
+        if (!$inputs) {
+            return $this->response->setJSON(['success'=>false,'msg'=>'Fill all required fields.']);
+        }
+        $uid = $this->request->getPost('uid');
+        $omodel = new Omodel();
+        $data = [
+            'fullname'     => $this->request->getPost('fullname'),
+            'email'        => $this->request->getPost('email'),
+            'branch'       => $this->request->getPost('branch'),
+            'position'     => $this->request->getPost('position'),
+            'joining_date' => $this->request->getPost('joining_date'),
+        ];
+        $result = $omodel->set($data)->where('uid',$uid)->update();
+        if ($result !== false) {
+            return $this->response->setJSON(['success'=>true,'msg'=>'Officer updated successfully.']);
+        }
+        return $this->response->setJSON(['success'=>false,'msg'=>'Something went wrong.']);
     }
 
     public function update_employee()
@@ -493,18 +532,8 @@ class Home extends BaseController
             return $this->response->setJSON($response);
         }
 
-        if($sta['status']== 0)
-        {
-            $data = [
-                'status' => 1
-            ];
-        }
-        else
-        {
-            $data = [
-                'status' => 0
-            ];
-        }
+        // Toggle: 1 (active) → 0 (inactive) and vice versa
+        $data = ['status' => $sta['status'] == 1 ? 0 : 1];
         $uid = $targetUid;
         $que = $userdata->set($data)->where('uid',$uid)->update();
 
@@ -521,6 +550,17 @@ class Home extends BaseController
 
     }
 
+    public function delete_officer()
+    {
+        $targetUid = $this->request->getPost('bid');
+        if(empty($targetUid)){
+            return $this->response->setJSON(['status'=>"Invalid request.",'success'=>false]);
+        }
+        $omodel = new Omodel();
+        $omodel->where('uid',$targetUid)->delete();
+        return $this->response->setJSON(['status'=>"Officer Deleted",'success'=>true]);
+    }
+
     public function delete_employee()
     {
         $targetUid = $this->request->getPost('bid');
@@ -532,6 +572,17 @@ class Home extends BaseController
         $userdata->where('uid',$targetUid)->delete();
         $response=['status'=>"Employee Deleted",'status_text'=>'Deleted','status_icon'=>'success','success'=>true];
         return $this->response->setJSON($response);
+    }
+
+    public function delete_complaint()
+    {
+        $id = $this->request->getPost('complaint_id');
+        if (empty($id)) {
+            return $this->response->setJSON(['status' => 'Invalid request.', 'success' => false]);
+        }
+        $model = new Cmodel();
+        $model->where('complaint_id', $id)->delete();
+        return $this->response->setJSON(['status' => 'Complaint deleted successfully.', 'success' => true]);
     }
 
     public function store_complaint()
@@ -627,7 +678,7 @@ class Home extends BaseController
     {
         $session=session();
         $uid=$session->get('uid');
-        $userdata=new Omodel();
+        $userdata=new Dmodel();
         $data['userdata']=$userdata->where('uid',$uid)->first();
         $data['title']="Generate Report";
         $data['main_content']="officer_report";
@@ -655,10 +706,6 @@ class Home extends BaseController
 
     public function forgot_pwd()
     {
-        $session=session();
-        $uid=$session->get('uid');
-        $userdata=new Dmodel();
-        $data['userdata']=$userdata->where('uid',$uid)->first();
         $inputs=$this->validate([
             'username'=>'required',
             'npassword'=>'required',

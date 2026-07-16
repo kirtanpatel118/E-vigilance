@@ -19,22 +19,9 @@
 														<input type="text" class="form-control form-control-solid" placeholder=""  name="complaint"/>
 													</div>											
 												</div>
-												<div class="row mb-5">
-													<div class="col-md-6 fv-row">													
-														<label class="fs-5 fw-bold mb-2">Upload Picture</label>
-													</div>
-														<div class="me-7 mb-4">
-															<div class="symbol symbol-100px symbol-lg-160px symbol-fixed position-relative">
-																<?php $image = $userdata['photo'] ?> 
-																<img src="<?php echo base_url("uploads/".$image) ?>" alt="image" />															
-															</div>
-														</div>
-													
-												</div>
                                                 <div class="d-flex flex-column mb-5">
-                                                            <label class="fs-5 fw-bold mb-2">Profile Picture</label>
-                                                            <input type="file" id="emppic"  name="emppic"  multiple  class="form-control form-control-solid"  accept="image/png, image/gif, image/jpeg, image/jpg">
-                                                            <label for="Profile-pic" class="choose-icon"><i class="fa fa-camera" aria-hidden="true"></i></label>
+                                                            <label class="fs-5 fw-bold mb-2">Attach Photo <span class="text-muted">(Optional)</span></label>
+                                                            <input type="file" id="emppic" name="emppic" class="form-control form-control-solid" accept="image/png, image/gif, image/jpeg, image/jpg">
                                                 </div>
 												<div class="separator mb-8"></div>
 												<button type="submit" value="submit" class="btn btn-primary" id="kt_careers_submit_button">

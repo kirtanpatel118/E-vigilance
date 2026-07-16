@@ -52,7 +52,7 @@
 						<div class="fv-row mb-10">
 							<div class="d-flex flex-stack mb-2">
 								<label class="required form-label fw-bolder text-dark fs-6 mb-0">Password</label>
-								<a href="<?php echo base_url('Home/frtpwd');?>" class="link-primary fs-6 fw-bolder">Forgot Password ?</a>
+								<a href="<?php echo base_url('frtpwd');?>" class="link-primary fs-6 fw-bolder">Forgot Password ?</a>
 							</div>
 							<input class="form-control form-control-lg form-control-solid border-dark" type="password" name="password" autocomplete="off" required/>
 						</div>
@@ -79,7 +79,6 @@
 		</div>	
 	</div>	
 	<script src="<?php echo base_url('assets/js/jquery-3.6.0.js');?>"></script>
-	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 	<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 
@@ -141,8 +140,7 @@
                     }
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
-					alert("An error occured: " + xhr.status + " " + xhr.statusText);
-
+					alert("An error occurred: " + jqXHR.status + " " + jqXHR.statusText);
                 },
             });
         });

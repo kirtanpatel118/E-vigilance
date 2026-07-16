@@ -39,7 +39,7 @@
     <ul class="list-inline m-0">
 
     <li class="list-inline-item">
-    <a href="<?= base_url('update_emp/'.$row['uid'])?>"><button class="up btn btn-success btn-sm rounded-30" type="button" data-toggle="tooltip" data-placement="top" title="Update Employee"><i class="fa fa-edit"></i></button>
+    <a href="<?= base_url('update_officer/'.$row['uid'])?>"><button class="up btn btn-success btn-sm rounded-30" type="button" data-toggle="tooltip" data-placement="top" title="Update Officer"><i class="fa fa-edit"></i></button>
     </a></li>
     <li class="list-inline-item">
     <button class="cd btn btn-danger btn-sm rounded-30" value="<?= $row['uid'];?>" type="button" data-toggle="tooltip" data-placement="top" title="Delete"><i class="fa fa-trash"></i></button>
@@ -163,7 +163,7 @@
                             $.ajax({
                                         type: "post",
                                         data: {"bid": std_id},
-                                        url: "<?= base_url('Home/delete_employee') ?>",
+                                        url: "<?= base_url('delete_officer') ?>",
                                         dataType: "JSON",
                                                 success: function(Response){
                                                 new  swal({

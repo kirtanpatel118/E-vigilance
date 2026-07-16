@@ -3,9 +3,9 @@ namespace Config;
 
 class Paths
 {
-    public $systemDirectory = __DIR__ . '/../../vendor/codeigniter4/framework/system';
-    public $appDirectory = __DIR__ . '/..';
-    public $writableDirectory = __DIR__ . '/../../writable';
-    public $testsDirectory = __DIR__ . '/../../tests';
-    public $viewDirectory = __DIR__ . '/../Views';
+    public $systemDirectory = '/home/vol13_3/infinityfree.com/if0_42397730/htdocs/vendor/codeigniter4/framework/system';
+    public $appDirectory = '/home/vol13_3/infinityfree.com/if0_42397730/htdocs/app';
+    public $writableDirectory = '/home/vol13_3/infinityfree.com/if0_42397730/htdocs/writable';
+    public $testsDirectory = '/home/vol13_3/infinityfree.com/if0_42397730/htdocs/tests';
+    public $viewDirectory = '/home/vol13_3/infinityfree.com/if0_42397730/htdocs/app/Views';
 }

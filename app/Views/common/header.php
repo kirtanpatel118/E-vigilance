@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head><base href="../../">
+	<head>
 	<link href="<?php echo base_url('assets/plugins/custom/datatables/datatables.bundle.css')?>" rel="stylesheet" type="text/css"/>
 		<title> <?php echo $title;  ?>
 </title>
@@ -22,7 +22,6 @@
 		<link href="<?php echo base_url('assets/plugins/global/plugins.bundle.css');?>" rel="stylesheet" type="text/css" />
 		<link href="<?php echo base_url('assets/css/style.bundle.css');?>" rel="stylesheet" type="text/css" />
 		<link href="<?php echo base_url('assets/css/global/Custom.css');?>" rel="stylesheet" type="text/css"/>
-		<script src="<?php echo base_url('assets/js/abc.js');?>"></script>
 		<script src="<?php echo base_url('assets/plugins/global/plugins.bundle.js')?>"></script>
 		<script src="<?php echo base_url('assets/js/jquery-3.6.0.js');?>"></script>
 		<script src="<?php echo base_url('assets/js/jquery.validate.min.js');?>"></script>
@@ -83,6 +82,33 @@
 							</div>
 
 							<div data-kt-menu-trigger="click" data-kt-menu-placement="right-start" class="menu-item py-3">
+								<span class="menu-link menu-center" title="Employees" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss="click" data-bs-placement="right">
+									<span class="menu-icon me-0">
+										<i class="bi bi-person-lines-fill fs-2"></i>
+									</span>
+								</span>
+								<div class="menu-sub menu-sub-dropdown w-225px px-1 py-8">
+									<div class="menu-item">
+										<div class="menu-content">
+											<span class="menu-section fs-5 fw-bolder ps-1 py-1">Employees</span>
+										</div>
+									</div>
+									<div class="menu-item">
+										<a class="menu-link" href="<?php echo base_url('getemp'); ?>">
+											<span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+											<span class="menu-title">View Employees</span>
+										</a>
+									</div>
+									<div class="menu-item">
+										<a class="menu-link" href="<?php echo base_url('sign-up'); ?>">
+											<span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+											<span class="menu-title">Add Employee</span>
+										</a>
+									</div>
+								</div>
+							</div>
+
+							<div data-kt-menu-trigger="click" data-kt-menu-placement="right-start" class="menu-item py-3">
 								<span class="menu-link menu-center" title="Complaint" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss="click" data-bs-placement="right">
 									<span class="menu-icon me-0">
 										<i class="bi bi-laptop"></i>
@@ -110,7 +136,7 @@
 									
 
 									<div class="menu-item">
-										<a class="menu-link" href="<?php echo base_url('view_Assign_Hwd') ?>">
+										<a class="menu-link" href="<?php echo base_url('Feedback') ?>">
 											<span class="menu-bullet">
 												<span class="bullet bullet-dot"></span>
 											</span>
@@ -220,23 +246,28 @@
 										
 										<div class="d-flex align-items-center ms-1 ms-lg-3" id="kt_header_user_menu_toggle">
 											
+											<?php
+							$_defaultAvatar = base_url('assets/media/avatars/150-26.jpg');
+							$_photo = $userdata['photo'] ?? '150-26.jpg';
+							$adminPhoto = ($_photo === '150-26.jpg') ? $_defaultAvatar : base_url('uploads/'.$_photo);
+							?>
 											<div class="cursor-pointer symbol symbol-30px symbol-md-40px" data-kt-menu-trigger="click" data-kt-menu-attach="parent" data-kt-menu-placement="bottom-end">
-												<img src="<?php echo base_url('assets/media/avatars/150-26.jpg');?>" alt="user" />
+												<img src="<?php echo $adminPhoto; ?>" alt="user" />
 											</div>
-											
+
 											<div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg menu-state-primary fw-bold py-4 fs-6 w-275px" data-kt-menu="true">
-												
+
 												<div class="menu-item px-3">
 													<div class="menu-content d-flex align-items-center px-3">
-														
+
 														<div class="symbol symbol-50px me-5">
-															<img alt="Logo" src="<?php echo base_url('assets/media/avatars/150-26.jpg');?>" />
+															<img alt="Logo" src="<?php echo $adminPhoto; ?>" />
 														</div>
-														
+
 														<div class="d-flex flex-column">
-															<div class="fw-bolder d-flex align-items-center fs-5"><?php echo "Ethan" ?>
+															<div class="fw-bolder d-flex align-items-center fs-5"><?php echo isset($userdata['fullname']) ? esc($userdata['fullname']) : 'Admin'; ?>
 															</div>
-															<a  class="fw-bold text-muted text-hover-primary fs-7"><?php echo "Hunt" ?></a>
+															<a class="fw-bold text-muted text-hover-primary fs-7"><?php echo isset($userdata['email']) ? esc($userdata['email']) : ''; ?></a>
 														</div>
 														
 													</div>

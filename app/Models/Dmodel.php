@@ -15,9 +15,9 @@ class Dmodel extends Model
                                     'position',
                                     'photo',
                                     'joining_date',
+                                    'status',
                                     'dt',
                                     'modt'
-
                                 ];
 
     

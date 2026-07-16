@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head><base href="../../../">
+	<head>
 		<title>e-Vigilance Complaint System</title>
 		<meta name="description" content="The most advanced Bootstrap Admin Theme on Themeforest trusted by 94,000 beginners and professionals. Multi-demo, Dark Mode, RTL support and complete React, Angular, Vue &amp; Laravel versions. Grab your copy now and get life-time updates for free." />
 		<meta name="keywords" content="Metronic, bootstrap, bootstrap 5, Angular, VueJs, React, Laravel, admin themes, web design, figma, web development, free templates, free admin themes, bootstrap theme, bootstrap template, bootstrap dashboard, bootstrap dak mode, bootstrap button, bootstrap datepicker, bootstrap timepicker, fullcalendar, datatables, flaticon" />
@@ -81,7 +81,6 @@
 		</div>	
 	</div>	
 	<script src="<?php echo base_url('assets/js/jquery-3.6.0.js');?>"></script>
-	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 	<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 
@@ -147,8 +146,7 @@
                     }
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
-					alert("An error occured: " + xhr.status + " " + xhr.statusText);
-
+					alert("An error occurred: " + jqXHR.status + " " + jqXHR.statusText);
                 },
             });
         });

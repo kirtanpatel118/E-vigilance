@@ -15,7 +15,7 @@
 														
 														<div class="col-md-6 fv-row">
 															<label class=" fs-5 fw-bold mb-2">Password</label>
-															<input class="form-control form-control-solid" placeholder="" value="<?php echo $userdata['pwd']; ?>" name="password"/>
+															<input class="form-control form-control-solid" type="password" placeholder="Enter new password" name="password"/>
 															<input type="hidden" value="<?php echo $userdata['uid']; ?>" name="uid"/>
 														</div>													
 												</div>

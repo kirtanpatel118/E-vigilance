@@ -13,11 +13,7 @@
 														<input class="form-control form-control-solid" placeholder="" value="<?php echo $empdata['email'];?>" name="email" required/>
 													</div>
 													
-													<div class="col-md-6 fv-row">
-														<label class="required fs-5 fw-bold mb-2">Phone</label>
-														<input class="form-control form-control-solid" placeholder="" value="<?php echo $empdata['Phone'];?>" name="Phone" required/>
-													</div>
-													
+																					
 												</div>
 												<input type="hidden" value="<?php echo $empdata['uid'];?>" name="uid" />
 												<div class="row mb-5">
@@ -78,7 +74,7 @@
 										})
 						
 					setTimeout(()=>{
-					window.location.href = '<?= base_url('viewemp') ?>';          
+					window.location.href = '<?= base_url('viewdashboard') ?>';          
 
 					},2000);	
 		

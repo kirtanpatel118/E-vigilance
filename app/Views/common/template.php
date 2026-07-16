@@ -4,7 +4,7 @@
 
       if($uid==null)
       {
-              echo view('sign-up');
+              echo view('sign-in');
 
       }
       else
